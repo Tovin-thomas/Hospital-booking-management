@@ -13,4 +13,7 @@ urlpatterns = [
     path('departments/delete/<int:pk>/', views.delete_department, name='delete_department'),
     path('bookings/', views.manage_bookings, name='manage_bookings'),
     path('bookings/update-status/<int:pk>/<str:status>/', views.update_booking_status, name='admin_update_booking_status'),
+    path('contacts/', views.manage_contacts, name='manage_contacts'),
+    path('contacts/view/<int:pk>/', views.view_contact, name='view_contact'),
+    path('contacts/delete/<int:pk>/', views.delete_contact, name='delete_contact'),
 ]

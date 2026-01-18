@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib import messages
 
 def login_view(request):
@@ -26,3 +26,18 @@ def logout_view(request):
     logout(request)
     messages.info(request, "You have successfully logged out.")
     return redirect('home')
+
+def signup_view(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            username = form.cleaned_data.get('username')
+            messages.success(request, f"Account created successfully for {username}! You can now login.")
+            login(request, user)  # Automatically log in the user after signup
+            return redirect('home')
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = UserCreationForm()
+    return render(request, 'accounts/signup.html', {'form': form})

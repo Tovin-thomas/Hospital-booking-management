@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
 from doctors.models import Doctors, Departments
 from bookings.models import Booking
+from core.models import Contact
 from .forms import DoctorForm, DepartmentForm
 
 def is_admin(user):
@@ -109,3 +110,29 @@ def update_booking_status(request, pk, status):
     booking.save()
     messages.success(request, f'Booking status updated to {status}!')
     return redirect('manage_bookings')
+
+@user_passes_test(is_admin)
+def manage_contacts(request):
+    contacts = Contact.objects.all().order_by('-submitted_at')
+    unread_count = Contact.objects.filter(is_read=False).count()
+    return render(request, 'custom_admin/manage_contacts.html', {
+        'contacts': contacts,
+        'unread_count': unread_count
+    })
+
+@user_passes_test(is_admin)
+def view_contact(request, pk):
+    contact = get_object_or_404(Contact, pk=pk)
+    # Mark as read when viewed
+    if not contact.is_read:
+        contact.is_read = True
+        contact.save()
+    return render(request, 'custom_admin/view_contact.html', {'contact': contact})
+
+@user_passes_test(is_admin)
+def delete_contact(request, pk):
+    contact = get_object_or_404(Contact, pk=pk)
+    contact.delete()
+    messages.success(request, 'Contact message deleted successfully!')
+    return redirect('manage_contacts')
+

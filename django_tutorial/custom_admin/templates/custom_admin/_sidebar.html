@@ -26,6 +26,12 @@
                     <i class="fas fa-calendar-check me-2"></i> Bookings
                 </a>
             </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link {% if 'contact' in request.resolver_match.url_name %}active fw-600 text-primary{% else %}text-dark{% endif %}"
+                    href="{% url 'manage_contacts' %}">
+                    <i class="fas fa-envelope me-2"></i> Contact Messages
+                </a>
+            </li>
         </ul>
     </div>
 </div>

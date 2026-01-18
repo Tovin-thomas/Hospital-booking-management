@@ -65,26 +65,43 @@
             <div class="col-lg-7">
                 <div class="card border-0 shadow-sm p-5">
                     <h3 class="fw-bold mb-4">Send Us a Message</h3>
-                    <form action="#" method="POST" class="shadow-none p-0">
+
+                    <!-- Messages -->
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+
+                    <form method="POST" class="shadow-none p-0">
+                        {% csrf_token %}
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label">Full Name</label>
-                                <input type="text" class="form-control" placeholder="John Doe">
+                                <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                                <input type="text" name="name" class="form-control" placeholder="John Doe" required>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Email Address</label>
-                                <input type="email" class="form-control" placeholder="john@example.com">
+                                <label class="form-label">Email Address <span class="text-danger">*</span></label>
+                                <input type="email" name="email" class="form-control" placeholder="john@example.com"
+                                    required>
                             </div>
                             <div class="col-12">
-                                <label class="form-label">Subject</label>
-                                <input type="text" class="form-control" placeholder="How can we help?">
+                                <label class="form-label">Subject <span class="text-danger">*</span></label>
+                                <input type="text" name="subject" class="form-control" placeholder="How can we help?"
+                                    required>
                             </div>
                             <div class="col-12">
-                                <label class="form-label">Message</label>
-                                <textarea class="form-control" rows="5" placeholder="Your message here..."></textarea>
+                                <label class="form-label">Message <span class="text-danger">*</span></label>
+                                <textarea name="message" class="form-control" rows="5"
+                                    placeholder="Your message here..." required></textarea>
                             </div>
                             <div class="col-12 mt-4">
-                                <button type="submit" class="btn btn-primary btn-lg w-100">Send Message</button>
+                                <button type="submit" class="btn btn-primary btn-lg w-100">
+                                    <i class="fas fa-paper-plane me-2"></i>Send Message
+                                </button>
                             </div>
                         </div>
                     </form>
