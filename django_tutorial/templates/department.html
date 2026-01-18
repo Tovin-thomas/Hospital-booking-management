@@ -1,18 +1,39 @@
 {% extends 'base.html' %}
 
-{% block title%}
-Department
-{% endblock %}
+{% block title %}Our Departments{% endblock %}
 
-{% block content%}
-<h1 class="text-center"> Our Departments </h1>
-<hr>
+{% block content %}
+<section class="section-padding">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h1 class="display-5 fw-bold mb-3">Health Care Departments</h1>
+            <p class="text-muted mx-auto" style="max-width: 600px;">Explore our specialized departments tailored to
+                provide comprehensive care for every medical need.</p>
+        </div>
 
-{% for d in dept %}
-<div class="mx-auto w-50 bg-success text-center text-white p-3 my-3 border border-warning rounded">
-    <h1>{{d.dep_name}}</h1>
-    <p>{{d.dep_decription}}</p>
-</div>
-{% endfor %}
-
+        <div class="row g-4">
+            {% for d in dept %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 p-4 border-0 shadow-sm text-center">
+                    <div class="bg-primary-light p-3 rounded-circle d-inline-block mx-auto mb-4"
+                        style="width: 64px; height: 64px; display: flex !important; align-items: center; justify-content: center;">
+                        <i class="fas fa-hospital-user fa-xl text-primary"></i>
+                    </div>
+                    <h3 class="h4 mb-3">{{d.dep_name}}</h3>
+                    <p class="text-muted">{{d.dep_decription}}</p>
+                    <div class="mt-auto">
+                        <a href="{% url 'doctors' %}"
+                            class="btn btn-link text-primary text-decoration-none fw-bold">View Specialists <i
+                                class="fas fa-chevron-right ms-1 small"></i></a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p class="lead text-muted">No departments listed yet.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
 {% endblock %}

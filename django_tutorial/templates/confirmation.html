@@ -1,15 +1,29 @@
 {% extends 'base.html' %}
 
-{% block title%}
-Booking Confirmation
-{% endblock %}
+{% block title %}Booking Confirmed{% endblock %}
 
-{% block content%}
-<div class="container text-center">
-    <h1>Booking Confirmation</h1>
+{% block content %}
+<section class="section-padding">
+    <div class="container text-center">
+        <div class="mb-5 animate-fade-in">
+            <div class="bg-success bg-opacity-10 text-success p-4 rounded-circle d-inline-block mb-4"
+                style="width: 100px; height: 100px; display: flex !important; align-items: center; justify-content: center;">
+                <i class="fas fa-check-circle fa-4x"></i>
+            </div>
+            <h1 class="display-5 fw-bold mb-3">Booking Confirmed!</h1>
+            <p class="lead text-muted mx-auto" style="max-width: 600px;">Thank you for choosing City Hospital. Your
+                appointment has been successfully scheduled. We look forward to seeing you.</p>
+        </div>
 
-    <div class="alert alert-info" role="alert">
-        We have received your appointment request, our representative will call you shortly.
+        <div class="card border-0 shadow-sm p-5 mx-auto mb-5" style="max-width: 500px;">
+            <p class="text-muted mb-4">You will receive a confirmation email with all the details shortly. Please arrive
+                15 minutes before your scheduled time.</p>
+            <div class="d-grid gap-3">
+                <a href="{% url 'home' %}" class="btn btn-primary btn-lg">Back to Home</a>
+                <a href="#" class="btn btn-outline-secondary px-4 py-2" onclick="window.print()">Print Receipt <i
+                        class="fas fa-print ms-2"></i></a>
+            </div>
+        </div>
     </div>
-</div>
+</section>
 {% endblock %}

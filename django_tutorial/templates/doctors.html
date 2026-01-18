@@ -1,24 +1,84 @@
 {% extends 'base.html' %}
 
-{% block title%}
-Doctors
-{% endblock %}
+{% block title %}Our Doctors{% endblock %}
 
-{% block content%}
-<h1 class="text-center">Our Doctors</h1>
-<hr>
+{% block content %}
+<section class="section-padding bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h1 class="display-5 fw-bold mb-3">Meet Our Medical Specialists</h1>
+            <p class="text-muted mx-auto" style="max-width: 600px;">Our team of highly qualified and experienced doctors
+                is here to provide you with the best medical care possible.</p>
+        </div>
 
-<div class="container text-center bg-light">
-    {% for d in doctors%}
-    <div class="card text-center mx-3 my-3" style="width: 18rem; display:inline-block">
-        <img src="{{d.doc_image.url}}" class="card-img-top" alt="...">
-        <div class="card-body">
-            <h5 class="card-title">Dr. {{d.doc_name}}</h5>
-            <p class="card-text">{{d.doc_spec}}</p>
-            <h6>{{d.dep_name}} Department</h6>
+        <div class="row g-4">
+            {% for d in doctors %}
+            <div class="col-lg-3 col-md-6 animate-fade-in">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="position-relative overflow-hidden">
+                        <img src="{{d.doc_image.url}}" class="card-img-top" alt="Dr. {{d.doc_name}}"
+                            style="height: 300px; object-fit: cover; transition: transform 0.5s ease;">
+                        <div class="position-absolute bottom-0 start-0 w-100 p-3 bg-gradient-dark text-white"
+                            style="background: linear-gradient(transparent, rgba(0,0,0,0.8));">
+                            <span class="badge bg-primary mb-2">{{d.dep_name}}</span>
+                        </div>
+                    </div>
+                    <div class="card-body text-center p-4">
+                        <h5 class="card-title mb-1">Dr. {{d.doc_name}}</h5>
+                        <p class="text-primary fw-600 mb-2">{{d.doc_spec}}</p>
+
+                        <div class="mb-3">
+                            <h6 class="small fw-bold text-muted text-uppercase mb-2">Status & Availability</h6>
+
+                            <!-- Display Present/Absent -->
+                            <div class="mb-2">
+                                {% if d.current_status == "Present" %}
+                                <span class="badge bg-success py-2 px-3">Present Today</span>
+                                {% elif d.current_status == "Absent" %}
+                                <span class="badge bg-danger py-2 px-3">Absent Today</span>
+                                {% else %}
+                                <span class="badge bg-secondary py-2 px-3">Off Duty Today</span>
+                                {% endif %}
+                            </div>
+
+                            <!-- Display Weekly Schedule with Time -->
+                            <div class="small text-muted">
+                                {% for avail in d.availabilities.all %}
+                                <div class="mb-1">
+                                    <span class="fw-bold">{{ avail.get_day_display }}:</span>
+                                    <span>{{ avail.start_time|time:"H:i" }} - {{ avail.end_time|time:"H:i" }}</span>
+                                </div>
+                                {% empty %}
+                                <div class="italic">No schedule set</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-center mt-3">
+                            <a href="{% url 'booking' %}" class="btn btn-primary btn-sm px-4 rounded-pill">Book
+                                Appointment</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p class="lead text-muted">No doctors found at the moment.</p>
+            </div>
+            {% endfor %}
         </div>
     </div>
-    {% endfor %}
-</div>
+</section>
 
+<!-- Call to Action -->
+<section class="py-5 bg-white">
+    <div class="container text-center">
+        <h3 class="mb-4">Need a specific specialist?</h3>
+        <p class="text-muted mb-4">You can browse by department or book an appointment directly.</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="{% url 'department' %}" class="btn btn-outline-primary">View Departments</a>
+            <a href="{% url 'booking' %}" class="btn btn-primary">Book Now</a>
+        </div>
+    </div>
+</section>
 {% endblock %}

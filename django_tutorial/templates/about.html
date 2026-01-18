@@ -1,9 +1,65 @@
 {% extends 'base.html' %}
 
-{% block title%}
-About
-{% endblock %}
+{% block title %}About Us{% endblock %}
 
-{% block content%}
-<h1>About Page</h1>
+{% block content %}
+<section class="section-padding overflow-hidden">
+    <div class="container">
+        <div class="row align-items-center mb-5 pb-5">
+            <div class="col-lg-6 mb-4 mb-lg-0 animate-fade-in">
+                <span class="badge badge-soft badge-soft-primary mb-3">About City Hospital</span>
+                <h1 class="display-5 fw-bold mb-4">Leading the Way in Medical Excellence</h1>
+                <p class="lead text-muted mb-4">Since 1995, City Hospital has been at the forefront of medical
+                    innovation and patient care. We believe in treatng every patient with dignity, respect, and the
+                    highest standard of medical professionalism.</p>
+                <div class="row g-4 mt-2">
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-check-circle text-primary me-2"></i>
+                            <span class="fw-bold">Certified Doctors</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-check-circle text-primary me-2"></i>
+                            <span class="fw-bold">Modern Equipment</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-check-circle text-primary me-2"></i>
+                            <span class="fw-bold">24/7 Services</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-check-circle text-primary me-2"></i>
+                            <span class="fw-bold">Affordable Care</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 animate-fade-in" style="animation-delay: 0.2s;">
+                <img src="/static/images/car2.jpg" class="img-fluid rounded-4 shadow-lg" alt="About Us">
+            </div>
+        </div>
+
+        <div class="bg-primary text-white p-5 rounded-4 animate-fade-in">
+            <div class="row text-center gy-4">
+                <div class="col-md-4">
+                    <h2 class="display-6 fw-bold">25+</h2>
+                    <p class="mb-0">Years of Experience</p>
+                </div>
+                <div class="col-md-4">
+                    <h2 class="display-6 fw-bold">1M+</h2>
+                    <p class="mb-0">Happy Patients</p>
+                </div>
+                <div class="col-md-4">
+                    <h2 class="display-6 fw-bold">100%</h2>
+                    <p class="mb-0">Quality Commitment</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

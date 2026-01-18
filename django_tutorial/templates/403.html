@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Access Denied{% endblock %}
+
+{% block content %}
+<section class="section-padding">
+    <div class="container text-center">
+        <div class="mb-5">
+            <i class="fas fa-lock text-danger fa-5x"></i>
+        </div>
+        <h1 class="display-4 fw-bold mb-4">Access Denied</h1>
+        <p class="lead text-muted mb-5">{{ message|default:"You do not have permission to view this page." }}</p>
+        <a href="{% url 'home' %}" class="btn btn-primary btn-lg shadow-lg">Back to Home</a>
+    </div>
+</section>
+{% endblock %}

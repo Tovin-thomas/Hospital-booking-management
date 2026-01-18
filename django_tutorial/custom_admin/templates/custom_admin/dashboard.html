@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid section-padding">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 d-md-block bg-white sidebar shadow-sm rounded p-4 mb-4"
+            style="height: fit-content;">
+            <div class="position-sticky">
+                <h5 class="fw-bold mb-4">Administration</h5>
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-2">
+                        <a class="nav-link active fw-600 text-primary" href="{% url 'custom_admin_dashboard' %}">
+                            <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a class="nav-link text-dark" href="{% url 'manage_doctors' %}">
+                            <i class="fas fa-user-md me-2"></i> Doctors
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a class="nav-link text-dark" href="{% url 'manage_departments' %}">
+                            <i class="fas fa-hospital me-2"></i> Departments
+                        </a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a class="nav-link text-dark" href="{% url 'manage_bookings' %}">
+                            <i class="fas fa-calendar-check me-2"></i> Bookings
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div
+                class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2 fw-bold">Executive Overview</h1>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row g-4 mb-5">
+                <div class="col-12 col-sm-6 col-xl-4">
+                    <div class="card border-0 shadow-sm h-100 overflow-hidden" style="border-radius: 15px;">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted mb-1 fw-500">Total Doctors</p>
+                                    <h2 class="fw-bold mb-0 text-dark">{{ total_doctors }}</h2>
+                                </div>
+                                <div class="bg-primary-light text-primary rounded-circle p-3">
+                                    <i class="fas fa-user-md fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-4">
+                    <div class="card border-0 shadow-sm h-100 overflow-hidden" style="border-radius: 15px;">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted mb-1 fw-500">Active Bookings</p>
+                                    <h2 class="fw-bold mb-0 text-dark">{{ total_bookings }}</h2>
+                                </div>
+                                <div class="bg-success-light text-success rounded-circle p-3">
+                                    <i class="fas fa-calendar-check fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-4">
+                    <div class="card border-0 shadow-sm h-100 overflow-hidden" style="border-radius: 15px;">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted mb-1 fw-500">Departments</p>
+                                    <h2 class="fw-bold mb-0 text-dark">{{ total_departments }}</h2>
+                                </div>
+                                <div class="bg-info-light text-info rounded-circle p-3">
+                                    <i class="fas fa-hospital fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Bookings Table -->
+            <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+                <div class="card-header bg-white border-0 py-4 px-4 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold">Recent Appointments</h5>
+                    <a href="{% url 'manage_bookings' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4 border-0">Patient</th>
+                                <th class="border-0">Doctor</th>
+                                <th class="border-0">Date</th>
+                                <th class="border-0 text-end pe-4">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for booking in recent_bookings %}
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-600">{{ booking.p_name }}</div>
+                                    <div class="small text-muted">{{ booking.p_phone }}</div>
+                                </td>
+                                <td>
+                                    <div class="fw-500 text-main">Dr. {{ booking.doc_name.doc_name }}</div>
+                                    <div class="small text-muted">{{ booking.doc_name.doc_spec }}</div>
+                                </td>
+                                <td>
+                                    <div class="fw-500">{{ booking.formatted_date }}</div>
+                                    <div class="small text-muted">Booked on: {{ booking.formatted_booked_on }}</div>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <span class="badge 
+                                        {% if booking.status == 'pending' %}bg-warning
+                                        {% elif booking.status == 'accepted' or booking.status == 'completed' %}bg-success
+                                        {% else %}bg-danger{% endif %}">
+                                        {{ booking.get_status_display }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center py-5">No recent bookings found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-primary-light {
+        background-color: rgba(13, 110, 253, 0.1);
+    }
+
+    .bg-success-light {
+        background-color: rgba(25, 135, 84, 0.1);
+    }
+
+    .bg-info-light {
+        background-color: rgba(13, 202, 240, 0.1);
+    }
+
+    .fw-500 {
+        font-weight: 500;
+    }
+
+    .fw-600 {
+        font-weight: 600;
+    }
+
+    .nav-link:hover {
+        background-color: #f8f9fa;
+        border-radius: 5px;
+    }
+
+    .nav-link.active {
+        background-color: #e9ecef;
+        border-radius: 5px;
+    }
+</style>
+{% endblock %}

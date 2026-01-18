@@ -1,5 +1,235 @@
-li:hover {
-    background-color: gray;
-    border-radius: 10px;
-    border: 1px solid yellow;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1e40af;
+  --primary-light: #dbeafe;
+  --secondary: #10b981;
+  --secondary-dark: #059669;
+  --accent: #f59e0b;
+  --bg-body: #f8fafc;
+  --bg-card: #ffffff;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --radius: 12px;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  line-height: 1.6;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+/* Navbar Redesign */
+.navbar {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0.75rem 0;
+  transition: all 0.3s ease;
+}
+
+.navbar-brand-text {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-size: 1.5rem;
+  background: linear-gradient(to right, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nav-link {
+  color: var(--text-muted) !important;
+  font-weight: 500;
+  margin: 0 0.5rem;
+  padding: 0.5rem 1rem !important;
+  border-radius: var(--radius);
+  transition: all 0.2s ease;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--primary) !important;
+  background-color: var(--primary-light);
+}
+
+/* Hero Section */
+.hero-section {
+  padding: 8rem 0;
+  background: radial-gradient(circle at top right, #dbeafe, transparent),
+    radial-gradient(circle at bottom left, #fff1f2, transparent);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-content h1 {
+  font-size: 3.5rem;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+
+.hero-image-container {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-image-container::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 100%;
+  height: 100%;
+  background: var(--primary);
+  opacity: 0.1;
+  border-radius: 2rem;
+  z-index: -1;
+}
+
+/* Cards Redesign */
+.card {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.card-img-top {
+  height: 250px;
+  object-fit: cover;
+}
+
+.card-title {
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+/* Form Styles */
+form {
+  background: var(--bg-card);
+  padding: 2.5rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+}
+
+.form-control,
+.form-select {
+  border: 1px solid var(--border-color);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-light);
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  border: none;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+/* Footer Section */
+footer {
+  background-color: var(--text-main) !important;
+  color: #fff;
+  padding: 4rem 0 2rem;
+}
+
+.footer-link {
+  color: #cbd5e1;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-link:hover {
+  color: #fff;
+}
+
+/* Utility Classes */
+.text-gradient {
+  background: linear-gradient(to right, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.section-padding {
+  padding: 6rem 0;
+}
+
+.badge-soft {
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 0.825rem;
+}
+
+.badge-soft-primary {
+  background-color: var(--primary-light);
+  color: var(--primary);
+}
+
+/* Micro-animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+/* Soft Alert Colors */
+.bg-danger-soft {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+}
+
+.bg-warning-soft {
+  background-color: rgba(245, 158, 11, 0.1) !important;
+}
+
+.bg-success-soft {
+  background-color: rgba(16, 185, 129, 0.1) !important;
 }

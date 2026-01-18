@@ -1,0 +1,43 @@
+<div class="col-md-3 col-lg-2 d-md-block bg-white sidebar shadow-sm rounded p-4 mb-4" style="height: fit-content;">
+    <div class="position-sticky">
+        <h5 class="fw-bold mb-4">Administration</h5>
+        <ul class="nav flex-column">
+            <li class="nav-item mb-2">
+                <a class="nav-link {% if request.resolver_match.url_name == 'custom_admin_dashboard' %}active fw-600 text-primary{% else %}text-dark{% endif %}"
+                    href="{% url 'custom_admin_dashboard' %}">
+                    <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link {% if 'doctor' in request.resolver_match.url_name %}active fw-600 text-primary{% else %}text-dark{% endif %}"
+                    href="{% url 'manage_doctors' %}">
+                    <i class="fas fa-user-md me-2"></i> Doctors
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link {% if 'department' in request.resolver_match.url_name %}active fw-600 text-primary{% else %}text-dark{% endif %}"
+                    href="{% url 'manage_departments' %}">
+                    <i class="fas fa-hospital me-2"></i> Departments
+                </a>
+            </li>
+            <li class="nav-item mb-2">
+                <a class="nav-link {% if 'booking' in request.resolver_match.url_name %}active fw-600 text-primary{% else %}text-dark{% endif %}"
+                    href="{% url 'manage_bookings' %}">
+                    <i class="fas fa-calendar-check me-2"></i> Bookings
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<style>
+    .nav-link:hover {
+        background-color: #f8f9fa;
+        border-radius: 5px;
+    }
+
+    .nav-link.active {
+        background-color: #f0f4f8;
+        border-radius: 5px;
+    }
+</style>

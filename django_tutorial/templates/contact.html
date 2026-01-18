@@ -1,12 +1,96 @@
 {% extends 'base.html' %}
 
-{% block title%}
-Contact
-{% endblock %}
+{% block title %}Contact Us{% endblock %}
 
-{% block content%}
-<h1>Contact Page</h1>
+{% block content %}
+<section class="section-padding">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h1 class="display-5 fw-bold mb-3">Get in Touch</h1>
+            <p class="text-muted mx-auto" style="max-width: 600px;">Have questions or need assistance? Our friendly team
+                is here to help you 24/7.</p>
+        </div>
 
+        <div class="row g-5">
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm p-4 mb-4 h-100">
+                    <h3 class="fw-bold mb-4">Contact Information</h3>
 
+                    <div class="mb-4 d-flex">
+                        <div class="bg-primary-light p-3 rounded-circle me-3"
+                            style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-map-marker-alt text-primary"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-1">Our Location</h5>
+                            <p class="text-muted mb-0">123 Health Ave, Medical District, City 56789</p>
+                        </div>
+                    </div>
 
+                    <div class="mb-4 d-flex">
+                        <div class="bg-primary-light p-3 rounded-circle me-3"
+                            style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-envelope text-primary"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-1">Email Us</h5>
+                            <p class="text-muted mb-0">info@cityhospital.com<br>support@cityhospital.com</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-4 d-flex">
+                        <div class="bg-primary-light p-3 rounded-circle me-3"
+                            style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-phone-alt text-primary"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-1">Call Us</h5>
+                            <p class="text-muted mb-0">Emergency: 0123456789<br>Reception: 0123456700</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto">
+                        <h5 class="fw-bold mb-3">Follow Us</h5>
+                        <div class="d-flex gap-2">
+                            <a href="#" class="btn btn-primary btn-sm rounded-circle"><i
+                                    class="fab fa-facebook-f p-1"></i></a>
+                            <a href="#" class="btn btn-primary btn-sm rounded-circle"><i
+                                    class="fab fa-twitter p-1"></i></a>
+                            <a href="#" class="btn btn-primary btn-sm rounded-circle"><i
+                                    class="fab fa-instagram p-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm p-5">
+                    <h3 class="fw-bold mb-4">Send Us a Message</h3>
+                    <form action="#" method="POST" class="shadow-none p-0">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" class="form-control" placeholder="John Doe">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-control" placeholder="john@example.com">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Subject</label>
+                                <input type="text" class="form-control" placeholder="How can we help?">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Message</label>
+                                <textarea class="form-control" rows="5" placeholder="Your message here..."></textarea>
+                            </div>
+                            <div class="col-12 mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg w-100">Send Message</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}
