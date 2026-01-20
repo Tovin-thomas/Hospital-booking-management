@@ -1,0 +1,99 @@
+{% extends 'custom_admin/admin_base.html' %}
+
+{% block title %}Add Doctor{% endblock %}
+
+{% block content %}
+<div class="container-fluid section-padding">
+    <div class="row">
+        <!-- Sidebar -->
+        {% include 'custom_admin/_sidebar.html' %}
+
+        <!-- Main Content -->
+        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div
+                class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2 fw-bold">Add New Doctor</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <a href="{% url 'manage_doctors' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Doctors
+                    </a>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+                        <div class="card-body p-4">
+                            <form method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+
+                                <h5 class="fw-bold mb-4">Doctor Information</h5>
+
+                                <div class="mb-3">
+                                    <label for="doc_name" class="form-label fw-500">Doctor Name <span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="doc_name" name="doc_name" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="doc_spec" class="form-label fw-500">Specialization <span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="doc_spec" name="doc_spec"
+                                        placeholder="e.g., Cardiologist, Pediatrician, etc." required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="dep_name" class="form-label fw-500">Department <span
+                                            class="text-danger">*</span></label>
+                                    <select class="form-select" id="dep_name" name="dep_name" required>
+                                        <option value="">Select Department</option>
+                                        {% for dept in departments %}
+                                        <option value="{{ dept.id }}">{{ dept.dep_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="doc_image" class="form-label fw-500">Doctor Image <span
+                                            class="text-danger">*</span></label>
+                                    <input type="file" class="form-control" id="doc_image" name="doc_image"
+                                        accept="image/*" required>
+                                    <div class="form-text">Upload a professional photo of the doctor</div>
+                                </div>
+
+                                <hr class="my-4">
+
+                                <h5 class="fw-bold mb-4">User Account (Optional)</h5>
+                                <p class="text-muted small mb-3">Create a user account to allow the doctor to login and
+                                    access their dashboard</p>
+
+                                <div class="mb-3">
+                                    <label for="username" class="form-label fw-500">Username</label>
+                                    <input type="text" class="form-control" id="username" name="username">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="email" class="form-label fw-500">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email">
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="password" class="form-label fw-500">Password</label>
+                                    <input type="password" class="form-control" id="password" name="password">
+                                </div>
+
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <a href="{% url 'manage_doctors' %}" class="btn btn-outline-secondary">Cancel</a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-2"></i>Add Doctor
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

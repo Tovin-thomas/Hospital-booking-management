@@ -1,0 +1,100 @@
+{% extends 'custom_admin/admin_base.html' %}
+
+{% block title %}My Appointments{% endblock %}
+
+{% block content %}
+<div class="container-fluid section-padding">
+    <div class="row">
+        <!-- Sidebar -->
+        {% include 'custom_admin/_sidebar.html' %}
+
+        <!-- Main Content -->
+        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div
+                class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2 fw-bold">My Appointments</h1>
+                <div class="btn-group">
+                    <a href="?status=all"
+                        class="btn btn-outline-secondary {% if current_status == 'all' %}active{% endif %}">All</a>
+                    <a href="?status=pending"
+                        class="btn btn-outline-warning {% if current_status == 'pending' %}active{% endif %}">Pending</a>
+                    <a href="?status=accepted"
+                        class="btn btn-outline-primary {% if current_status == 'accepted' %}active{% endif %}">Accepted</a>
+                    <a href="?status=completed"
+                        class="btn btn-outline-success {% if current_status == 'completed' %}active{% endif %}">Completed</a>
+                </div>
+            </div>
+
+            <!-- Appointments List -->
+            <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-4 border-0">Patient</th>
+                                <th class="border-0">Date & Time</th>
+                                <th class="border-0">Status</th>
+                                <th class="border-0 text-end pe-4">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for booking in bookings %}
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-bold">{{ booking.p_name }}</div>
+                                    <div class="small text-muted">
+                                        <i class="fas fa-phone-alt me-1"></i>{{ booking.p_phone }}
+                                    </div>
+                                    <div class="small text-muted">
+                                        <i class="fas fa-envelope me-1"></i>{{ booking.p_email }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="fw-bold">{{ booking.booking_date }}</div>
+                                    <div class="small text-muted">Booked: {{ booking.booked_on|date:"M d, Y" }}</div>
+                                </td>
+                                <td>
+                                    <span class="badge 
+                                        {% if booking.status == 'pending' %}bg-warning
+                                        {% elif booking.status == 'accepted' %}bg-primary
+                                        {% elif booking.status == 'completed' %}bg-success
+                                        {% else %}bg-danger{% endif %}">
+                                        {{ booking.get_status_display }}
+                                    </span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    {% if booking.status == 'pending' %}
+                                    <a href="{% url 'update_booking_status' booking.id 'accepted' %}"
+                                        class="btn btn-sm btn-success me-1">
+                                        <i class="fas fa-check me-1"></i>Accept
+                                    </a>
+                                    <a href="{% url 'update_booking_status' booking.id 'rejected' %}"
+                                        class="btn btn-sm btn-danger">
+                                        <i class="fas fa-times me-1"></i>Reject
+                                    </a>
+                                    {% elif booking.status == 'accepted' %}
+                                    <a href="{% url 'update_booking_status' booking.id 'completed' %}"
+                                        class="btn btn-sm btn-success">
+                                        <i class="fas fa-check-double me-1"></i>Mark Complete
+                                    </a>
+                                    {% else %}
+                                    <span class="text-muted small">No actions</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center py-5">
+                                    <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted">No appointments found.</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

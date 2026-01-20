@@ -1,0 +1,73 @@
+{% extends 'custom_admin/admin_base.html' %}
+
+{% block title %}Delete Doctor{% endblock %}
+
+{% block content %}
+<div class="container-fluid section-padding">
+    <div class="row">
+        <!-- Sidebar -->
+        {% include 'custom_admin/_sidebar.html' %}
+
+        <!-- Main Content -->
+        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div
+                class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2 fw-bold">Delete Doctor</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <a href="{% url 'manage_doctors' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Doctors
+                    </a>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-6 mx-auto">
+                    <div class="card border-0 shadow-sm border-danger"
+                        style="border-radius: 15px; border-width: 2px !important;">
+                        <div class="card-body p-5 text-center">
+                            <i class="fas fa-exclamation-triangle fa-4x text-danger mb-4"></i>
+                            <h4 class="fw-bold mb-3">Confirm Deletion</h4>
+                            <p class="text-muted mb-4">
+                                Are you sure you want to delete this doctor? This action cannot be undone.
+                            </p>
+
+                            <div class="card bg-light mb-4">
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center justify-content-center">
+                                        {% if doctor.doc_image %}
+                                        <img src="{{ doctor.doc_image.url }}" alt="{{ doctor.doc_name }}"
+                                            class="rounded-circle me-3"
+                                            style="width: 60px; height: 60px; object-fit: cover;">
+                                        {% else %}
+                                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3"
+                                            style="width: 60px; height: 60px;">
+                                            <i class="fas fa-user-md"></i>
+                                        </div>
+                                        {% endif %}
+                                        <div class="text-start">
+                                            <h6 class="mb-1">Dr. {{ doctor.doc_name }}</h6>
+                                            <p class="mb-0 text-muted small">{{ doctor.doc_spec }} - {{
+                                                doctor.dep_name.dep_name }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                                    <a href="{% url 'manage_doctors' %}"
+                                        class="btn btn-outline-secondary px-4">Cancel</a>
+                                    <button type="submit" class="btn btn-danger px-4">
+                                        <i class="fas fa-trash me-2"></i>Yes, Delete
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

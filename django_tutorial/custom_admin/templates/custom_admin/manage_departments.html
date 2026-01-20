@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'custom_admin/admin_base.html' %}
 
 {% block title %}Manage Departments{% endblock %}
 
@@ -20,127 +20,82 @@
                 </div>
             </div>
 
-            <!-- Messages -->
-            {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            {% endfor %}
-            {% endif %}
-
             <!-- Departments Grid -->
             <div class="row g-4">
-                {% for department in departments %}
-                <div class="col-12 col-md-6 col-lg-4">
+                {% for dept in departments %}
+                <div class="col-md-6 col-lg-4">
                     <div class="card border-0 shadow-sm h-100" style="border-radius: 15px;">
                         <div class="card-body p-4">
                             <div class="d-flex justify-content-between align-items-start mb-3">
-                                <div class="bg-primary-light text-primary rounded-circle p-3">
+                                <div class="bg-info-light text-info rounded-circle p-3">
                                     <i class="fas fa-hospital fa-2x"></i>
                                 </div>
-                                <span class="badge bg-secondary">#{{ department.id }}</span>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-light" type="button" data-bs-toggle="dropdown">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a class="dropdown-item" href="{% url 'edit_department' dept.id %}">
+                                                <i class="fas fa-edit me-2"></i>Edit
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item text-danger"
+                                                href="{% url 'delete_department' dept.id %}">
+                                                <i class="fas fa-trash me-2"></i>Delete
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
-                            <h5 class="fw-bold mb-2">{{ department.dep_name }}</h5>
-                            <p class="text-muted mb-4" style="min-height: 60px;">
-                                {{ department.dep_decription|truncatewords:15 }}
-                            </p>
-                            <div class="d-flex gap-2">
-                                <a href="{% url 'edit_department' department.id %}"
-                                    class="btn btn-sm btn-outline-primary flex-fill">
-                                    <i class="fas fa-edit"></i> Edit
-                                </a>
-                                <a href="{% url 'delete_department' department.id %}"
-                                    class="btn btn-sm btn-outline-danger flex-fill"
-                                    onclick="return confirm('Are you sure you want to delete {{ department.dep_name }}?');">
-                                    <i class="fas fa-trash"></i> Delete
-                                </a>
+
+                            <h5 class="fw-bold mb-2">{{ dept.dep_name }}</h5>
+                            <p class="text-muted small mb-3">{{ dept.dep_decription|truncatewords:15 }}</p>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="badge bg-primary">{{ dept.doctor_count }} Doctors</span>
+                                </div>
+                                <div>
+                                    <a href="{% url 'edit_department' dept.id %}"
+                                        class="btn btn-sm btn-outline-primary me-2">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'delete_department' dept.id %}"
+                                        class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 {% empty %}
                 <div class="col-12">
-                    <div class="card border-0 shadow-sm text-center py-5" style="border-radius: 15px;">
-                        <div class="card-body">
-                            <i class="fas fa-hospital fa-3x text-muted mb-3"></i>
-                            <p class="text-muted">No departments found. Add your first department!</p>
-                            <a href="{% url 'add_department' %}" class="btn btn-primary mt-2">
-                                <i class="fas fa-plus me-2"></i>Add Department
+                    <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+                        <div class="card-body p-5 text-center">
+                            <i class="fas fa-hospital fa-4x text-muted mb-3"></i>
+                            <h5 class="fw-bold mb-2">No Departments Found</h5>
+                            <p class="text-muted mb-4">Get started by adding your first department</p>
+                            <a href="{% url 'add_department' %}" class="btn btn-primary">
+                                <i class="fas fa-plus me-2"></i>Add First Department
                             </a>
                         </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
-
-            <!-- Alternative Table View -->
-            <div class="card border-0 shadow-sm mt-4" style="border-radius: 15px;">
-                <div class="card-header bg-white border-0 py-4 px-4">
-                    <h5 class="mb-0 fw-bold">All Departments ({{ departments.count }})</h5>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="bg-light">
-                            <tr>
-                                <th class="ps-4 border-0">ID</th>
-                                <th class="border-0">Department Name</th>
-                                <th class="border-0">Description</th>
-                                <th class="border-0 text-end pe-4">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for department in departments %}
-                            <tr>
-                                <td class="ps-4">
-                                    <span class="text-muted">#{{ department.id }}</span>
-                                </td>
-                                <td>
-                                    <div class="fw-600">{{ department.dep_name }}</div>
-                                </td>
-                                <td>
-                                    <div class="text-muted">{{ department.dep_decription|truncatewords:20 }}</div>
-                                </td>
-                                <td class="text-end pe-4">
-                                    <a href="{% url 'edit_department' department.id %}"
-                                        class="btn btn-sm btn-outline-primary me-2">
-                                        <i class="fas fa-edit"></i> Edit
-                                    </a>
-                                    <a href="{% url 'delete_department' department.id %}"
-                                        class="btn btn-sm btn-outline-danger"
-                                        onclick="return confirm('Are you sure you want to delete {{ department.dep_name }}?');">
-                                        <i class="fas fa-trash"></i> Delete
-                                    </a>
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="4" class="text-center py-5">
-                                    <i class="fas fa-hospital fa-3x text-muted mb-3"></i>
-                                    <p class="text-muted">No departments found.</p>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </div>
     </div>
 </div>
 
 <style>
-    .bg-primary-light {
-        background-color: rgba(13, 110, 253, 0.1);
-    }
-
-    .fw-600 {
-        font-weight: 600;
-    }
-
-    .table tbody tr:hover {
-        background-color: #f8f9fa;
+    .bg-info-light {
+        background-color: rgba(13, 202, 240, 0.1);
     }
 </style>
 {% endblock %}

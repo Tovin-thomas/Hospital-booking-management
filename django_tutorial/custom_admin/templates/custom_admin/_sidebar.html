@@ -1,36 +1,64 @@
 <div class="col-md-3 col-lg-2 d-md-block bg-white sidebar shadow-sm rounded p-4 mb-4" style="height: fit-content;">
     <div class="position-sticky">
-        <h5 class="fw-bold mb-4">Administration</h5>
-        <ul class="nav flex-column">
-            <li class="nav-item mb-2">
-                <a class="nav-link {% if request.resolver_match.url_name == 'custom_admin_dashboard' %}active fw-600 text-primary{% else %}text-dark{% endif %}"
+        <h5 class="fw-bold mb-4 px-2">{% if request.user.is_superuser %}Administration{% else %}Doctor Panel{% endif %}
+        </h5>
+        <ul class="nav flex-column gap-1">
+            <li class="nav-item">
+                <a class="nav-link {% if request.path == '/custom-admin/dashboard/' %}active{% endif %} fw-bold"
                     href="{% url 'custom_admin_dashboard' %}">
-                    <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                    <i class="fas fa-tachometer-alt me-2" style="width: 20px;"></i> Dashboard
                 </a>
             </li>
+
             {% if request.user.is_superuser %}
-            <li class="nav-item mb-2">
-                <a class="nav-link {% if 'doctor' in request.resolver_match.url_name %}active fw-600 text-primary{% else %}text-dark{% endif %}"
+            <li class="nav-item">
+                <a class="nav-link {% if 'doctors' in request.path %}active{% endif %} fw-500"
                     href="{% url 'manage_doctors' %}">
-                    <i class="fas fa-user-md me-2"></i> Doctors
+                    <i class="fas fa-user-md me-2" style="width: 20px;"></i> Manage Doctors
                 </a>
             </li>
-            <li class="nav-item mb-2">
-                <a class="nav-link {% if 'department' in request.resolver_match.url_name %}active fw-600 text-primary{% else %}text-dark{% endif %}"
+            <li class="nav-item">
+                <a class="nav-link {% if 'departments' in request.path %}active{% endif %} fw-500"
                     href="{% url 'manage_departments' %}">
-                    <i class="fas fa-hospital me-2"></i> Departments
+                    <i class="fas fa-hospital me-2" style="width: 20px;"></i> Manage Departments
                 </a>
             </li>
-            <li class="nav-item mb-2">
-                <a class="nav-link {% if 'booking' in request.resolver_match.url_name %}active fw-600 text-primary{% else %}text-dark{% endif %}"
-                    href="{% url 'manage_bookings' %}">
-                    <i class="fas fa-calendar-check me-2"></i> Bookings
+            <li class="nav-item">
+                <a class="nav-link {% if 'messages' in request.path %}active{% endif %} fw-500"
+                    href="{% url 'manage_messages' %}">
+                    <i class="fas fa-envelope me-2" style="width: 20px;"></i> Contact Messages
+                    {% if unread_messages > 0 %}
+                    <span class="badge bg-danger rounded-pill float-end">{{ unread_messages }}</span>
+                    {% endif %}
                 </a>
             </li>
-            <li class="nav-item mb-2">
-                <a class="nav-link {% if 'contact' in request.resolver_match.url_name %}active fw-600 text-primary{% else %}text-dark{% endif %}"
-                    href="{% url 'manage_contacts' %}">
-                    <i class="fas fa-envelope me-2"></i> Contact Messages
+
+            <hr class="my-3 text-muted">
+
+            <li class="nav-item">
+                <a class="nav-link fw-500 text-muted" href="/admin/" target="_blank">
+                    <i class="fas fa-cog me-2" style="width: 20px;"></i> Django Admin
+                    <i class="fas fa-external-link-alt small ms-1"></i>
+                </a>
+            </li>
+            {% else %}
+            <!-- Doctor Links -->
+            <li class="nav-item">
+                <a class="nav-link {% if 'appointments' in request.path %}active{% endif %} fw-500"
+                    href="{% url 'my_appointments' %}">
+                    <i class="fas fa-calendar-check me-2" style="width: 20px;"></i> My Appointments
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if 'schedule' in request.path %}active{% endif %} fw-500"
+                    href="{% url 'schedule_management' %}">
+                    <i class="fas fa-clock me-2" style="width: 20px;"></i> My Schedule
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if 'leaves' in request.path %}active{% endif %} fw-500"
+                    href="{% url 'leave_management' %}">
+                    <i class="fas fa-walking me-2" style="width: 20px;"></i> Leave Requests
                 </a>
             </li>
             {% endif %}
@@ -39,13 +67,27 @@
 </div>
 
 <style>
+    .nav-link {
+        color: #495057;
+        padding: 0.8rem 1rem;
+        transition: all 0.2s;
+    }
+
     .nav-link:hover {
         background-color: #f8f9fa;
-        border-radius: 5px;
+        color: #0d6efd;
+        border-radius: 8px;
+        transform: translateX(5px);
     }
 
     .nav-link.active {
-        background-color: #f0f4f8;
-        border-radius: 5px;
+        background-color: #0d6efd !important;
+        color: white !important;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(13, 110, 253, 0.2);
+    }
+
+    .nav-link.active i {
+        color: white !important;
     }
 </style>

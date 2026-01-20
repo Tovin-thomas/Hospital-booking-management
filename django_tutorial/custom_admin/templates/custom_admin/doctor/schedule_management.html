@@ -1,0 +1,108 @@
+{% extends 'custom_admin/admin_base.html' %}
+
+{% block title %}My Schedule{% endblock %}
+
+{% block content %}
+<div class="container-fluid section-padding">
+    <div class="row">
+        <!-- Sidebar -->
+        {% include 'custom_admin/_sidebar.html' %}
+
+        <!-- Main Content -->
+        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div
+                class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2 fw-bold">My Schedule</h1>
+            </div>
+
+            <div class="row g-4">
+                <!-- Add New Slot Form -->
+                <div class="col-12 col-xl-4">
+                    <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+                        <div class="card-header bg-white border-0 pt-4 px-4">
+                            <h5 class="fw-bold mb-0">Add Availability</h5>
+                        </div>
+                        <div class="card-body p-4">
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label class="form-label">Day of Week</label>
+                                    <select name="day" class="form-select" required>
+                                        {% for code, name in days %}
+                                        <option value="{{ code }}">{{ name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Start Time</label>
+                                            <input type="time" name="start_time" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">End Time</label>
+                                            <input type="time" name="end_time" class="form-control" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-plus me-2"></i>Add Slot
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Schedule List -->
+                <div class="col-12 col-xl-8">
+                    <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+                        <div class="card-header bg-white border-0 pt-4 px-4">
+                            <h5 class="fw-bold mb-0">Current Availability</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <tbody>
+                                        {% for slot in availabilities %}
+                                        <tr>
+                                            <td class="ps-4" style="width: 200px;">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="bg-light rounded-circle p-2 me-3 text-primary">
+                                                        <i class="far fa-calendar-alt"></i>
+                                                    </div>
+                                                    <span class="fw-bold">{{ slot.get_day_display }}</span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <i class="far fa-clock me-2 text-muted"></i>
+                                                {{ slot.start_time|time:"g:i A" }} - {{ slot.end_time|time:"g:i A" }}
+                                            </td>
+                                            <td class="text-end pe-4">
+                                                <a href="{% url 'delete_schedule' slot.id %}"
+                                                    class="btn btn-sm btn-outline-danger"
+                                                    onclick="return confirm('Remove this time slot?');">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% empty %}
+                                        <tr>
+                                            <td colspan="3" class="text-center py-5">
+                                                <p class="text-muted mb-0">No availability set. Please add your working
+                                                    hours.</p>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends 'custom_admin/admin_base.html' %}
+
+{% block title %}Edit Doctor{% endblock %}
+
+{% block content %}
+<div class="container-fluid section-padding">
+    <div class="row">
+        <!-- Sidebar -->
+        {% include 'custom_admin/_sidebar.html' %}
+
+        <!-- Main Content -->
+        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div
+                class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2 fw-bold">Edit Doctor</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <a href="{% url 'manage_doctors' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Doctors
+                    </a>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+                        <div class="card-body p-4">
+                            <form method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+
+                                <div class="mb-4 text-center">
+                                    {% if doctor.doc_image %}
+                                    <img src="{{ doctor.doc_image.url }}" alt="{{ doctor.doc_name }}"
+                                        class="rounded-circle mb-3"
+                                        style="width: 120px; height: 120px; object-fit: cover;">
+                                    {% else %}
+                                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3"
+                                        style="width: 120px; height: 120px; font-size: 2rem;">
+                                        <i class="fas fa-user-md"></i>
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <h5 class="fw-bold mb-4">Doctor Information</h5>
+
+                                <div class="mb-3">
+                                    <label for="doc_name" class="form-label fw-500">Doctor Name <span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="doc_name" name="doc_name"
+                                        value="{{ doctor.doc_name }}" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="doc_spec" class="form-label fw-500">Specialization <span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="doc_spec" name="doc_spec"
+                                        value="{{ doctor.doc_spec }}" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="dep_name" class="form-label fw-500">Department <span
+                                            class="text-danger">*</span></label>
+                                    <select class="form-select" id="dep_name" name="dep_name" required>
+                                        {% for dept in departments %}
+                                        <option value="{{ dept.id }}" {% if dept.id==doctor.dep_name.id %}selected{%
+                                            endif %}>
+                                            {{ dept.dep_name }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="doc_image" class="form-label fw-500">Doctor Image</label>
+                                    <input type="file" class="form-control" id="doc_image" name="doc_image"
+                                        accept="image/*">
+                                    <div class="form-text">Leave blank to keep current image</div>
+                                </div>
+
+                                {% if doctor.user %}
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    This doctor has a linked user account: <strong>{{ doctor.user.username }}</strong>
+                                </div>
+                                {% endif %}
+
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <a href="{% url 'manage_doctors' %}" class="btn btn-outline-secondary">Cancel</a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-2"></i>Update Doctor
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
