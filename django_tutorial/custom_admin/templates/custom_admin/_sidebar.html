@@ -8,6 +8,7 @@
                     <i class="fas fa-tachometer-alt me-2"></i> Dashboard
                 </a>
             </li>
+            {% if request.user.is_superuser %}
             <li class="nav-item mb-2">
                 <a class="nav-link {% if 'doctor' in request.resolver_match.url_name %}active fw-600 text-primary{% else %}text-dark{% endif %}"
                     href="{% url 'manage_doctors' %}">
@@ -32,6 +33,7 @@
                     <i class="fas fa-envelope me-2"></i> Contact Messages
                 </a>
             </li>
+            {% endif %}
         </ul>
     </div>
 </div>

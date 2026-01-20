@@ -9,19 +9,44 @@ from .forms import DoctorForm, DepartmentForm
 def is_admin(user):
     return user.is_superuser
 
-@user_passes_test(is_admin)
+def is_privileged(user):
+    return user.is_superuser or hasattr(user, 'doctors')
+
+@user_passes_test(is_privileged)
 def admin_dashboard(request):
-    total_doctors = Doctors.objects.count()
-    total_bookings = Booking.objects.count()
-    total_departments = Departments.objects.count()
-    recent_bookings = Booking.objects.all().order_by('-booked_on')[:5]
+    if hasattr(request.user, 'doctors'):
+        # Doctor Dashboard Logic
+        doctor = request.user.doctors
+        # Counts specific to the doctor
+        total_bookings = Booking.objects.filter(doc_name=doctor).count()
+        pending_bookings = Booking.objects.filter(doc_name=doctor, status='pending').count()
+        completed_bookings = Booking.objects.filter(doc_name=doctor, status='completed').count()
+        
+        # Recent bookings for this doctor only
+        recent_bookings = Booking.objects.filter(doc_name=doctor).order_by('-booked_on')[:5]
+        
+        context = {
+            'is_doctor': True,
+            'total_bookings': total_bookings,
+            'pending_bookings': pending_bookings,
+            'completed_bookings': completed_bookings,
+            'recent_bookings': recent_bookings,
+        }
+    else:
+        # Superuser / Admin Dashboard Logic
+        total_doctors = Doctors.objects.count()
+        total_bookings = Booking.objects.count()
+        total_departments = Departments.objects.count()
+        recent_bookings = Booking.objects.all().order_by('-booked_on')[:5]
+        
+        context = {
+            'is_superuser': True,
+            'total_doctors': total_doctors,
+            'total_bookings': total_bookings,
+            'total_departments': total_departments,
+            'recent_bookings': recent_bookings,
+        }
     
-    context = {
-        'total_doctors': total_doctors,
-        'total_bookings': total_bookings,
-        'total_departments': total_departments,
-        'recent_bookings': recent_bookings,
-    }
     return render(request, 'custom_admin/dashboard.html', context)
 
 @user_passes_test(is_admin)
@@ -98,14 +123,23 @@ def delete_department(request, pk):
     messages.success(request, 'Department deleted successfully!')
     return redirect('manage_departments')
 
-@user_passes_test(is_admin)
+@user_passes_test(is_privileged)
 def manage_bookings(request):
-    bookings = Booking.objects.all().order_by('-booked_on')
+    if hasattr(request.user, 'doctors'):
+        bookings = Booking.objects.filter(doc_name=request.user.doctors).order_by('-booked_on')
+    else:
+        bookings = Booking.objects.all().order_by('-booked_on')
     return render(request, 'custom_admin/manage_bookings.html', {'bookings': bookings})
 
-@user_passes_test(is_admin)
+@user_passes_test(is_privileged)
 def update_booking_status(request, pk, status):
     booking = get_object_or_404(Booking, pk=pk)
+    
+    # Security check: Ensure doctors modify only their own bookings
+    if hasattr(request.user, 'doctors') and booking.doc_name != request.user.doctors:
+        messages.error(request, "You are not authorized to update this booking.")
+        return redirect('manage_bookings')
+        
     booking.status = status
     booking.save()
     messages.success(request, f'Booking status updated to {status}!')

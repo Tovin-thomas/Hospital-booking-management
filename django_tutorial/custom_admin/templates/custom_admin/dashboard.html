@@ -6,44 +6,66 @@
 <div class="container-fluid section-padding">
     <div class="row">
         <!-- Sidebar -->
-        <div class="col-md-3 col-lg-2 d-md-block bg-white sidebar shadow-sm rounded p-4 mb-4"
-            style="height: fit-content;">
-            <div class="position-sticky">
-                <h5 class="fw-bold mb-4">Administration</h5>
-                <ul class="nav flex-column">
-                    <li class="nav-item mb-2">
-                        <a class="nav-link active fw-600 text-primary" href="{% url 'custom_admin_dashboard' %}">
-                            <i class="fas fa-tachometer-alt me-2"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item mb-2">
-                        <a class="nav-link text-dark" href="{% url 'manage_doctors' %}">
-                            <i class="fas fa-user-md me-2"></i> Doctors
-                        </a>
-                    </li>
-                    <li class="nav-item mb-2">
-                        <a class="nav-link text-dark" href="{% url 'manage_departments' %}">
-                            <i class="fas fa-hospital me-2"></i> Departments
-                        </a>
-                    </li>
-                    <li class="nav-item mb-2">
-                        <a class="nav-link text-dark" href="{% url 'manage_bookings' %}">
-                            <i class="fas fa-calendar-check me-2"></i> Bookings
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
+        {% include 'custom_admin/_sidebar.html' %}
 
         <!-- Main Content -->
         <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             <div
                 class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2 fw-bold">Executive Overview</h1>
+                <h1 class="h2 fw-bold">{% if is_doctor %}Doctor Dashboard{% else %}Executive Overview{% endif %}</h1>
             </div>
 
             <!-- Stats Cards -->
             <div class="row g-4 mb-5">
+                {% if is_doctor %}
+                <!-- Doctor Specific Stats -->
+                <div class="col-12 col-sm-6 col-xl-4">
+                    <div class="card border-0 shadow-sm h-100 overflow-hidden" style="border-radius: 15px;">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted mb-1 fw-500">My Total Bookings</p>
+                                    <h2 class="fw-bold mb-0 text-dark">{{ total_bookings }}</h2>
+                                </div>
+                                <div class="bg-primary-light text-primary rounded-circle p-3">
+                                    <i class="fas fa-calendar-alt fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-4">
+                    <div class="card border-0 shadow-sm h-100 overflow-hidden" style="border-radius: 15px;">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted mb-1 fw-500">Pending Requests</p>
+                                    <h2 class="fw-bold mb-0 text-dark">{{ pending_bookings }}</h2>
+                                </div>
+                                <div class="bg-warning-light text-warning rounded-circle p-3">
+                                    <i class="fas fa-clock fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-4">
+                    <div class="card border-0 shadow-sm h-100 overflow-hidden" style="border-radius: 15px;">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <p class="text-muted mb-1 fw-500">Completed Visits</p>
+                                    <h2 class="fw-bold mb-0 text-dark">{{ completed_bookings }}</h2>
+                                </div>
+                                <div class="bg-success-light text-success rounded-circle p-3">
+                                    <i class="fas fa-check-circle fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <!-- Admin Stats -->
                 <div class="col-12 col-sm-6 col-xl-4">
                     <div class="card border-0 shadow-sm h-100 overflow-hidden" style="border-radius: 15px;">
                         <div class="card-body p-4">
@@ -89,6 +111,7 @@
                         </div>
                     </div>
                 </div>
+                {% endif %}
             </div>
 
             <!-- Recent Bookings Table -->
@@ -155,6 +178,10 @@
 
     .bg-info-light {
         background-color: rgba(13, 202, 240, 0.1);
+    }
+
+    .bg-warning-light {
+        background-color: rgba(255, 193, 7, 0.1);
     }
 
     .fw-500 {
