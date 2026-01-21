@@ -22,7 +22,7 @@
                     <h3 class="h4 mb-3">{{d.dep_name}}</h3>
                     <p class="text-muted">{{d.dep_decription}}</p>
                     <div class="mt-auto">
-                        <a href="{% url 'doctors' %}"
+                        <a href="{% url 'doctors' %}?department={{d.id}}"
                             class="btn btn-link text-primary text-decoration-none fw-bold">View Specialists <i
                                 class="fas fa-chevron-right ms-1 small"></i></a>
                     </div>
