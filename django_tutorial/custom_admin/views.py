@@ -326,17 +326,51 @@ def my_appointments(request):
     """View for doctors to manage their appointments"""
     doctor = request.user.doctors
     
-    # Filter by status if provided
+    # Get all bookings for this doctor
+    bookings = Booking.objects.filter(doc_name=doctor)
+    
+    # Filter by status
     status_filter = request.GET.get('status', 'all')
-    
-    bookings = Booking.objects.filter(doc_name=doctor).order_by('-booked_on')
-    
     if status_filter != 'all':
         bookings = bookings.filter(status=status_filter)
-        
+    
+    # Search by patient name, phone, or email
+    search_query = request.GET.get('search', '').strip()
+    if search_query:
+        bookings = bookings.filter(
+            Q(p_name__icontains=search_query) |
+            Q(p_phone__icontains=search_query) |
+            Q(p_email__icontains=search_query)
+        )
+    
+    # Filter by appointment date range
+    date_from = request.GET.get('date_from', '').strip()
+    date_to = request.GET.get('date_to', '').strip()
+    
+    if date_from:
+        bookings = bookings.filter(booking_date__gte=date_from)
+    if date_to:
+        bookings = bookings.filter(booking_date__lte=date_to)
+    
+    # Order by booking date (most recent first)
+    bookings = bookings.order_by('-booking_date', '-booked_on')
+    
+    # Count statistics
+    total_count = Booking.objects.filter(doc_name=doctor).count()
+    pending_count = Booking.objects.filter(doc_name=doctor, status='pending').count()
+    accepted_count = Booking.objects.filter(doc_name=doctor, status='accepted').count()
+    completed_count = Booking.objects.filter(doc_name=doctor, status='completed').count()
+    
     context = {
         'bookings': bookings,
-        'current_status': status_filter
+        'current_status': status_filter,
+        'search_query': search_query,
+        'date_from': date_from,
+        'date_to': date_to,
+        'total_count': total_count,
+        'pending_count': pending_count,
+        'accepted_count': accepted_count,
+        'completed_count': completed_count,
     }
     return render(request, 'custom_admin/doctor/my_appointments.html', context)
 
