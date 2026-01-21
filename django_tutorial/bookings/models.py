@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from doctors.models import Doctors
 
 class Booking(models.Model):
@@ -9,6 +10,7 @@ class Booking(models.Model):
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled'),
     ]
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='bookings')
     p_name = models.CharField(max_length=255)
     p_phone = models.CharField(max_length=10)
     p_email = models.EmailField()

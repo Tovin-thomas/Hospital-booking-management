@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+
+{% block title %}My Appointments{% endblock %}
+
+{% block content %}
+<section class="section-padding bg-light">
+    <div class="container">
+        <div class="text-center mb-4">
+            <h1 class="display-5 fw-bold mb-3">My Appointments</h1>
+            <p class="text-muted">View and manage all your appointment bookings</p>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="card border-0 shadow-sm mb-4" style="border-radius: 15px;">
+            <div class="card-body p-4">
+                <form method="get" action="{% url 'my_bookings' %}" class="row g-3">
+                    <!-- Search Bar -->
+                    <div class="col-md-8">
+                        <label class="form-label small fw-bold text-muted">Search by Doctor</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0">
+                                <i class="fas fa-search text-muted"></i>
+                            </span>
+                            <input type="text" class="form-control border-start-0 ps-0" name="search"
+                                value="{{ search_query }}" placeholder="Search by doctor name or specialty...">
+                        </div>
+                    </div>
+
+                    <!-- Filter Buttons -->
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100 me-2">
+                            <i class="fas fa-filter me-1"></i> Search
+                        </button>
+                        <a href="{% url 'my_bookings' %}" class="btn btn-outline-secondary" title="Clear filters">
+                            <i class="fas fa-times"></i>
+                        </a>
+                    </div>
+                </form>
+
+                <!-- Status Filter Buttons -->
+                <div class="mt-3 pt-3 border-top">
+                    <label class="form-label small fw-bold text-muted mb-2">Filter by Status</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="?status=all{% if search_query %}&search={{ search_query }}{% endif %}"
+                            class="btn {% if current_status == 'all' %}btn-dark{% else %}btn-outline-secondary{% endif %} btn-sm">
+                            <i class="fas fa-list me-1"></i> All
+                            <span class="badge bg-light text-dark ms-1">{{ total_count }}</span>
+                        </a>
+                        <a href="?status=pending{% if search_query %}&search={{ search_query }}{% endif %}"
+                            class="btn {% if current_status == 'pending' %}btn-warning{% else %}btn-outline-warning{% endif %} btn-sm">
+                            <i class="fas fa-clock me-1"></i> Pending
+                            <span class="badge bg-light text-dark ms-1">{{ pending_count }}</span>
+                        </a>
+                        <a href="?status=accepted{% if search_query %}&search={{ search_query }}{% endif %}"
+                            class="btn {% if current_status == 'accepted' %}btn-primary{% else %}btn-outline-primary{% endif %} btn-sm">
+                            <i class="fas fa-check me-1"></i> Accepted
+                            <span class="badge bg-light text-dark ms-1">{{ accepted_count }}</span>
+                        </a>
+                        <a href="?status=completed{% if search_query %}&search={{ search_query }}{% endif %}"
+                            class="btn {% if current_status == 'completed' %}btn-success{% else %}btn-outline-success{% endif %} btn-sm">
+                            <i class="fas fa-check-double me-1"></i> Completed
+                            <span class="badge bg-light text-dark ms-1">{{ completed_count }}</span>
+                        </a>
+                        <a href="?status=cancelled{% if search_query %}&search={{ search_query }}{% endif %}"
+                            class="btn {% if current_status == 'cancelled' %}btn-danger{% else %}btn-outline-danger{% endif %} btn-sm">
+                            <i class="fas fa-times-circle me-1"></i> Cancelled
+                            <span class="badge bg-light text-dark ms-1">{{ cancelled_count }}</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bookings List -->
+        <div class="card border-0 shadow-sm" style="border-radius: 15px;">
+            <div class="card-header bg-white border-0 py-3 px-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-calendar-alt me-2 text-primary"></i>
+                        Your Appointments
+                    </h5>
+                    <span class="badge bg-primary rounded-pill">
+                        {{ bookings|length }} appointment{{ bookings|length|pluralize }}
+                    </span>
+                </div>
+            </div>
+
+            {% if bookings %}
+            <div class="list-group list-group-flush">
+                {% for booking in bookings %}
+                <div
+                    class="list-group-item p-4 {% if booking.status == 'cancelled' or booking.status == 'rejected' %}bg-light{% endif %}">
+                    <div class="row align-items-center">
+                        <!-- Doctor Info -->
+                        <div class="col-lg-4 col-md-6 mb-3 mb-md-0">
+                            <div class="d-flex align-items-center">
+                                {% if booking.doc_name.doc_image %}
+                                <img src="{{ booking.doc_name.doc_image.url }}" class="rounded-circle me-3"
+                                    style="width: 60px; height: 60px; object-fit: cover;"
+                                    alt="Dr. {{ booking.doc_name.doc_name }}">
+                                {% else %}
+                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3"
+                                    style="width: 60px; height: 60px;">
+                                    <i class="fas fa-user-md fa-lg"></i>
+                                </div>
+                                {% endif %}
+                                <div>
+                                    <h6 class="fw-bold mb-1">Dr. {{ booking.doc_name.doc_name }}</h6>
+                                    <small class="text-muted">{{ booking.doc_name.doc_spec }}</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Appointment Details -->
+                        <div class="col-lg-3 col-md-6 mb-3 mb-lg-0">
+                            <div>
+                                <div class="mb-2">
+                                    <i class="fas fa-calendar text-muted me-2"></i>
+                                    <strong>{{ booking.booking_date|date:"M d, Y" }}</strong>
+                                </div>
+                                <div>
+                                    <i class="fas fa-clock text-muted me-2"></i>
+                                    <strong>{{ booking.appointment_time|time:"g:i A" }}</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Status -->
+                        <div class="col-lg-2 col-md-6 mb-3 mb-lg-0">
+                            <span class="badge 
+                                {% if booking.status == 'pending' %}bg-warning
+                                {% elif booking.status == 'accepted' %}bg-primary
+                                {% elif booking.status == 'completed' %}bg-success
+                                {% elif booking.status == 'cancelled' %}bg-secondary
+                                {% else %}bg-danger{% endif %} rounded-pill px-3 py-2">
+                                {{ booking.get_status_display }}
+                            </span>
+                            <div class="small text-muted mt-2">
+                                Booked: {{ booking.booked_on|date:"M d" }}
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="col-lg-3 col-md-6 text-lg-end">
+                            {% if booking.status == 'pending' or booking.status == 'accepted' %}
+                            <a href="{% url 'cancel_booking' booking.id %}" class="btn btn-sm btn-outline-danger"
+                                onclick="return confirm('Are you sure you want to cancel this appointment?')">
+                                <i class="fas fa-times-circle me-1"></i> Cancel
+                            </a>
+                            {% elif booking.status == 'completed' %}
+                            <span class="text-success">
+                                <i class="fas fa-check-circle me-1"></i> Completed
+                            </span>
+                            {% elif booking.status == 'cancelled' %}
+                            <span class="text-muted">
+                                <i class="fas fa-ban me-1"></i> Cancelled
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="card-body text-center py-5">
+                <i class="fas fa-calendar-times fa-4x text-muted mb-3"></i>
+                <h5 class="text-muted">No appointments found</h5>
+                <p class="text-muted mb-4">You haven't booked any appointments yet.</p>
+                <a href="{% url 'booking' %}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i> Book New Appointment
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Quick Action -->
+        <div class="text-center mt-4">
+            <a href="{% url 'booking' %}" class="btn btn-lg btn-primary">
+                <i class="fas fa-plus-circle me-2"></i> Book New Appointment
+            </a>
+        </div>
+    </div>
+</section>
+
+<style>
+    .list-group-item {
+        transition: all 0.2s ease;
+    }
+
+    .list-group-item:hover {
+        background-color: #f8f9fa !important;
+    }
+</style>
+{% endblock %}

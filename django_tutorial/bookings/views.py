@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
@@ -16,7 +16,9 @@ def booking(request):
     if request.method == "POST":
         form = BookingForm(request.POST)
         if form.is_valid():
-            booking_instance = form.save()
+            booking_instance = form.save(commit=False)
+            booking_instance.user = request.user  # Link booking to current user
+            booking_instance.save()
             messages.success(request, f'✅ Appointment booked successfully with Dr. {booking_instance.doc_name.doc_name} on {booking_instance.booking_date.strftime("%B %d, %Y")} at {booking_instance.appointment_time.strftime("%I:%M %p")}!')
             return render(request, 'confirmation.html')
     else:
@@ -100,4 +102,66 @@ def get_available_slots(request):
         return JsonResponse({'error': 'Doctor not found'}, status=404)
     except ValueError:
         return JsonResponse({'error': 'Invalid date format'}, status=400)
+
+@login_required
+def my_bookings(request):
+    """View for users to see their booking history"""
+    # Redirect admins and doctors to their dashboard
+    if request.user.is_superuser or hasattr(request.user, 'doctors'):
+        return redirect('custom_admin_dashboard')
+    
+    # Get all bookings for current user
+    bookings = Booking.objects.filter(user=request.user)
+    
+    # Filter by status if provided
+    status_filter = request.GET.get('status', 'all')
+    if status_filter != 'all':
+        bookings = bookings.filter(status=status_filter)
+    
+    # Search by doctor name or date
+    search_query = request.GET.get('search', '').strip()
+    if search_query:
+        from django.db.models import Q
+        bookings = bookings.filter(
+            Q(doc_name__doc_name__icontains=search_query) |
+            Q(doc_name__doc_spec__icontains=search_query)
+        )
+    
+    # Order by booking date (upcoming first, then past)
+    bookings = bookings.order_by('-booking_date', '-appointment_time')
+    
+    # Count statistics
+    total_count = Booking.objects.filter(user=request.user).count()
+    pending_count = Booking.objects.filter(user=request.user, status='pending').count()
+    accepted_count = Booking.objects.filter(user=request.user, status='accepted').count()
+    completed_count = Booking.objects.filter(user=request.user, status='completed').count()
+    cancelled_count = Booking.objects.filter(user=request.user, status='cancelled').count()
+    
+    context = {
+        'bookings': bookings,
+        'current_status': status_filter,
+        'search_query': search_query,
+        'total_count': total_count,
+        'pending_count': pending_count,
+        'accepted_count': accepted_count,
+        'completed_count': completed_count,
+        'cancelled_count': cancelled_count,
+    }
+    return render(request, 'my_bookings.html', context)
+
+@login_required
+def cancel_booking(request, booking_id):
+    """Allow users to cancel their bookings"""
+    booking = get_object_or_404(Booking, id=booking_id, user=request.user)
+    
+    # Only allow cancellation of pending or accepted bookings
+    if booking.status in ['pending', 'accepted']:
+        booking.status = 'cancelled'
+        booking.save()
+        messages.success(request, f'✅ Your appointment with Dr. {booking.doc_name.doc_name} on {booking.booking_date.strftime("%B %d, %Y")} has been cancelled.')
+    else:
+        messages.error(request, f'❌ Cannot cancel this appointment (Status: {booking.get_status_display()}).')
+    
+    return redirect('my_bookings')
+
 
