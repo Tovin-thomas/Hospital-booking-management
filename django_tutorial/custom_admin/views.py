@@ -140,25 +140,35 @@ def edit_doctor(request, doctor_id):
             doctor.doc_image = request.FILES.get('doc_image')
         
         # Handle user account creation/update
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
+        username = request.POST.get('username', '').strip()
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '').strip()
         
         try:
             doctor.dep_name = Departments.objects.get(id=dep_name_id)
             
-            # If username, email, and password are provided, create or update user
-            if username and email and password:
-                if doctor.user:
-                    # Update existing user
-                    doctor.user.username = username
-                    doctor.user.email = email
-                    doctor.user.set_password(password)
+            # Determine if we should create/update user account
+            if doctor.user:
+                # Existing user - update if username or email provided
+                if username or email:
+                    if username:
+                        doctor.user.username = username
+                    if email:
+                        doctor.user.email = email
+                    if password:
+                        doctor.user.set_password(password)
                     doctor.user.first_name = doctor.doc_name
                     doctor.user.save()
-                    messages.success(request, f'Doctor {doctor.doc_name} and user account updated successfully!')
+                    if password:
+                        messages.success(request, f'✓ Doctor {doctor.doc_name} and user account "{doctor.user.username}" updated (password changed)!')
+                    else:
+                        messages.success(request, f'✓ Doctor {doctor.doc_name} and user account "{doctor.user.username}" updated!')
                 else:
-                    # Create new user
+                    # Just update doctor info, no user changes
+                    messages.success(request, f'✓ Doctor {doctor.doc_name} updated successfully!')
+            else:
+                # No existing user - create new if all three fields provided
+                if username and email and password:
                     user = User.objects.create_user(
                         username=username,
                         email=email,
@@ -166,13 +176,15 @@ def edit_doctor(request, doctor_id):
                         first_name=doctor.doc_name
                     )
                     doctor.user = user
-                    messages.success(request, f'Doctor {doctor.doc_name} updated and user account created successfully!')
+                    messages.success(request, f'✓ Doctor {doctor.doc_name} updated and user account "{username}" created successfully!')
+                elif username or email or password:
+                    # Partial credentials provided - warn user
+                    messages.warning(request, '⚠️ To create a new user account, you must fill ALL three fields: username, email, AND password.')
+                    messages.success(request, f'✓ Doctor {doctor.doc_name} updated successfully (no user account created)!')
+                else:
+                    messages.success(request, f'✓ Doctor {doctor.doc_name} updated successfully!')
             
             doctor.save()
-            
-            if not (username and email and password):
-                messages.success(request, f'Doctor {doctor.doc_name} updated successfully!')
-            
             return redirect('manage_doctors')
         except Exception as e:
             messages.error(request, f'Error updating doctor: {str(e)}')
