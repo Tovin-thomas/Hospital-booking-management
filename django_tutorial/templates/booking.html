@@ -36,13 +36,34 @@
                             </div>
                         </div>
                         <div class="col-lg-7 p-5 bg-white">
-                            <form action="" method="POST" class="shadow-none p-0">
+                            <form action="" method="POST" class="shadow-none p-0" id="bookingForm">
                                 {% csrf_token %}
                                 <div class="row">
                                     <div class="col-12">
                                         {{form|crispy}}
                                     </div>
                                 </div>
+
+                                <!-- Availability Info Box -->
+                                <div id="availabilityInfo" class="alert alert-info mt-3" style="display: none;">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <span id="availabilityMessage"></span>
+                                </div>
+
+                                <!-- Available Slots Display -->
+                                <div id="slotsDisplay" class="mt-3" style="display: none;">
+                                    <h6 class="fw-bold mb-2">
+                                        <i class="fas fa-clock me-2 text-primary"></i>Available Time Slots:
+                                    </h6>
+                                    <div id="slotsList" class="d-flex flex-wrap gap-2"></div>
+                                </div>
+
+                                <!-- Booked Times Warning -->
+                                <div id="bookedTimesDisplay" class="alert alert-warning mt-3" style="display: none;">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    <strong>Already Booked Times:</strong> <span id="bookedTimesList"></span>
+                                </div>
+
                                 <div class="mt-4">
                                     <button class="btn btn-primary btn-lg w-100 py-3" type="submit">Confirm
                                         Appointment</button>
@@ -55,4 +76,110 @@
         </div>
     </div>
 </section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const doctorField = document.querySelector('select[name="doc_name"]');
+        const dateField = document.querySelector('input[name="booking_date"]');
+        const timeField = document.querySelector('input[name="appointment_time"]');
+
+        function checkAvailability() {
+            const doctorId = doctorField?.value;
+            const selectedDate = dateField?.value;
+
+            if (!doctorId || !selectedDate) {
+                hideAllAlerts();
+                return;
+            }
+
+            // Fetch available slots
+            fetch(`{% url 'get_available_slots' %}?doctor_id=${doctorId}&date=${selectedDate}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.available) {
+                        showAvailableSlots(data);
+                    } else {
+                        showUnavailableMessage(data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching availability:', error);
+                });
+        }
+
+        function showAvailableSlots(data) {
+            // Show availability message
+            const infoBox = document.getElementById('availabilityInfo');
+            const messageEl = document.getElementById('availabilityMessage');
+            messageEl.textContent = data.message;
+            infoBox.className = 'alert alert-success mt-3';
+            infoBox.style.display = 'block';
+
+            // Show available slots
+            const slotsDisplay = document.getElementById('slotsDisplay');
+            const slotsList = document.getElementById('slotsList');
+            slotsList.innerHTML = '';
+
+            data.slots.forEach(slot => {
+                const badge = document.createElement('span');
+                badge.className = 'badge bg-primary-subtle text-primary px-3 py-2';
+                badge.textContent = slot.display;
+                slotsList.appendChild(badge);
+            });
+
+            slotsDisplay.style.display = 'block';
+
+            // Show booked times if any
+            const bookedDisplay = document.getElementById('bookedTimesDisplay');
+            const bookedList = document.getElementById('bookedTimesList');
+
+            if (data.booked_times && data.booked_times.length > 0) {
+                const bookedFormatted = data.booked_times.map(time => {
+                    const [h, m] = time.split(':');
+                    const hour = parseInt(h);
+                    const ampm = hour >= 12 ? 'PM' : 'AM';
+                    const displayHour = hour % 12 || 12;
+                    return `${displayHour}:${m} ${ampm}`;
+                }).join(', ');
+
+                bookedList.textContent = bookedFormatted;
+                bookedDisplay.style.display = 'block';
+            } else {
+                bookedDisplay.style.display = 'none';
+            }
+        }
+
+        function showUnavailableMessage(data) {
+            const infoBox = document.getElementById('availabilityInfo');
+            const messageEl = document.getElementById('availabilityMessage');
+
+            let message = data.message;
+            if (data.available_days && data.available_days.length > 0) {
+                message += '. Available on: ' + data.available_days.join(', ');
+            }
+
+            messageEl.textContent = message;
+            infoBox.className = 'alert alert-warning mt-3';
+            infoBox.style.display = 'block';
+
+            // Hide slots and booked times
+            document.getElementById('slotsDisplay').style.display = 'none';
+            document.getElementById('bookedTimesDisplay').style.display = 'none';
+        }
+
+        function hideAllAlerts() {
+            document.getElementById('availabilityInfo').style.display = 'none';
+            document.getElementById('slotsDisplay').style.display = 'none';
+            document.getElementById('bookedTimesDisplay').style.display = 'none';
+        }
+
+        // Add event listeners
+        if (doctorField) {
+            doctorField.addEventListener('change', checkAvailability);
+        }
+        if (dateField) {
+            dateField.addEventListener('change', checkAvailability);
+        }
+    });
+</script>
 {% endblock %}

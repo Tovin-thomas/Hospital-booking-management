@@ -3,4 +3,6 @@ from . import views
 
 urlpatterns = [
     path('booking', views.booking, name='booking'),
+    path('api/available-slots/', views.get_available_slots, name='get_available_slots'),
 ]
+
