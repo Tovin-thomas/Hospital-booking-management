@@ -3,14 +3,28 @@ from django.contrib import messages
 from .models import Contact
 
 def index(request):
-    if not request.user.is_authenticated:
-        return redirect('login')
+    # Redirect logged-in doctors and admins to their dashboards
+    if request.user.is_authenticated:
+        if request.user.is_superuser or hasattr(request.user, 'doctors'):
+            return redirect('admin_dashboard')
+    
+    # Homepage accessible to everyone else (public or regular users)
     return render(request, 'index.html')
     
 def about(request):
+    # Redirect logged-in doctors and admins to their dashboards
+    if request.user.is_authenticated:
+        if request.user.is_superuser or hasattr(request.user, 'doctors'):
+            return redirect('admin_dashboard')
+    
     return render(request, 'about.html')
 
 def contact(request):
+    # Redirect logged-in doctors and admins to their dashboards
+    if request.user.is_authenticated:
+        if request.user.is_superuser or hasattr(request.user, 'doctors'):
+            return redirect('admin_dashboard')
+    
     if request.method == 'POST':
         name = request.POST.get('name')
         email = request.POST.get('email')

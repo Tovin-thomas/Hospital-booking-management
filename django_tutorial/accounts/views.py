@@ -12,9 +12,11 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                messages.info(request, f"You are now logged in as {username}.")
+                # Don't show message for admins/doctors - they go straight to dashboard
                 if user.is_superuser or hasattr(user, 'doctors'):
                     return redirect('custom_admin_dashboard')
+                # Show welcome message only for regular patients
+                messages.info(request, f"Welcome back, {username}!")
                 return redirect('home')
             else:
                 messages.error(request,"Invalid username or password.")
@@ -27,7 +29,7 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     messages.info(request, "You have successfully logged out.")
-    return redirect('home')
+    return redirect('login')  # Go to login page, NOT homepage
 
 def signup_view(request):
     if request.method == 'POST':
