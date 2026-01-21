@@ -61,7 +61,8 @@
                                             class="text-danger">*</span></label>
                                     <select class="form-select" id="dep_name" name="dep_name" required>
                                         {% for dept in departments %}
-                                        <option value="{{ dept.id }}" {% if dept.id==doctor.dep_name.id %}selected{%
+                                        <option value="{{ dept.id }}" {% if
+                                            dept.id|stringformat:"i"==selected_dept_id|stringformat:"i" %}selected{%
                                             endif %}>
                                             {{ dept.dep_name }}
                                         </option>
@@ -74,6 +75,44 @@
                                     <input type="file" class="form-control" id="doc_image" name="doc_image"
                                         accept="image/*">
                                     <div class="form-text">Leave blank to keep current image</div>
+                                </div>
+
+                                <hr class="my-4">
+
+                                <h5 class="fw-bold mb-4">User Account</h5>
+                                <p class="text-muted small mb-3">
+                                    {% if doctor.user %}
+                                    Update the login credentials for this doctor
+                                    {% else %}
+                                    Create a user account to allow the doctor to login and access their dashboard
+                                    {% endif %}
+                                </p>
+
+                                <div class="mb-3">
+                                    <label for="username" class="form-label fw-500">Username</label>
+                                    <input type="text" class="form-control" id="username" name="username"
+                                        value="{% if doctor.user %}{{ doctor.user.username }}{% endif %}"
+                                        placeholder="{% if doctor.user %}Leave blank to keep current{% else %}Create username for doctor{% endif %}">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="email" class="form-label fw-500">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email"
+                                        value="{% if doctor.user %}{{ doctor.user.email }}{% endif %}"
+                                        placeholder="{% if doctor.user %}Leave blank to keep current{% else %}Enter email address{% endif %}">
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="password" class="form-label fw-500">Password</label>
+                                    <input type="password" class="form-control" id="password" name="password"
+                                        placeholder="{% if doctor.user %}Leave blank to keep current password{% else %}Create password{% endif %}">
+                                    <div class="form-text">
+                                        {% if doctor.user %}
+                                        Only fill this if you want to change the password
+                                        {% else %}
+                                        Enter all three fields (username, email, password) to create account
+                                        {% endif %}
+                                    </div>
                                 </div>
 
                                 {% if doctor.user %}

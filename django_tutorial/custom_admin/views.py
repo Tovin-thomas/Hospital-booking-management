@@ -139,18 +139,51 @@ def edit_doctor(request, doctor_id):
         if request.FILES.get('doc_image'):
             doctor.doc_image = request.FILES.get('doc_image')
         
+        # Handle user account creation/update
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        
         try:
             doctor.dep_name = Departments.objects.get(id=dep_name_id)
+            
+            # If username, email, and password are provided, create or update user
+            if username and email and password:
+                if doctor.user:
+                    # Update existing user
+                    doctor.user.username = username
+                    doctor.user.email = email
+                    doctor.user.set_password(password)
+                    doctor.user.first_name = doctor.doc_name
+                    doctor.user.save()
+                    messages.success(request, f'Doctor {doctor.doc_name} and user account updated successfully!')
+                else:
+                    # Create new user
+                    user = User.objects.create_user(
+                        username=username,
+                        email=email,
+                        password=password,
+                        first_name=doctor.doc_name
+                    )
+                    doctor.user = user
+                    messages.success(request, f'Doctor {doctor.doc_name} updated and user account created successfully!')
+            
             doctor.save()
-            messages.success(request, f'Doctor {doctor.doc_name} updated successfully!')
+            
+            if not (username and email and password):
+                messages.success(request, f'Doctor {doctor.doc_name} updated successfully!')
+            
             return redirect('manage_doctors')
         except Exception as e:
             messages.error(request, f'Error updating doctor: {str(e)}')
     
     departments = Departments.objects.all()
+    users_without_doctors = User.objects.filter(doctors__isnull=True)
     context = {
         'doctor': doctor,
         'departments': departments,
+        'selected_dept_id': doctor.dep_name_id,  # Pass ID directly to avoid template comparison issues
+        'users_without_doctors': users_without_doctors,
     }
     return render(request, 'custom_admin/edit_doctor.html', context)
 
